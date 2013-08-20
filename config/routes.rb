@@ -1,10 +1,9 @@
 FantasyDraft::Application.routes.draw do
 
   resources :players
-
   resources :positions
-
   resources :sources
+  resources :rankings
 
   get 'fetch' => 'players#fetch'
 

@@ -1,0 +1,29 @@
+<h1>Listing Rankings (<%= @qty %>)</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player ID</th>
+      <th>Name</th>
+      <th>Position</th>
+      <th>Team</th>
+      <th>Overall Rank</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @comp_ranks.each do |id,comp_rank| %>
+      <tr>
+        <td><%= id %></td>
+        <td><%= comp_rank[:name] %></td>
+        <td><%= comp_rank[:position] %></td>
+        <td><%= comp_rank[:team] %></td>
+        <td><%= comp_rank[:overall_rank] %></td>
+        <td></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p><%= @loop_times %> | <%= @reset_times %> | <%= @reg_times %></p>
