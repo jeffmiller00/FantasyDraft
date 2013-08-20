@@ -5,19 +5,20 @@ class RankingsController < ApplicationController
   # GET /rankings.json
   def index
     @comp_ranks = {}
-    @qty = Ranking.all.count
-    @loop_times = 0
-    @reset_times = 0
-    @reg_times = 0
     Ranking.all.each do |rank|
-      @loop_times += 1 
       @comp_ranks[rank.player.id] ||= {}
+      @comp_ranks[rank.player.id][:sources] ||= {}
       @comp_ranks[rank.player.id][:overall_rank] ||= 0.0
       @comp_ranks[rank.player.id][:name] ||= "#{rank.player.first_name} #{rank.player.last_name}"
       @comp_ranks[rank.player.id][:position] ||= rank.player.position.name
       @comp_ranks[rank.player.id][:team] ||= rank.player.team
+      @comp_ranks[rank.player.id][:sources][rank.source.id] ||= {}
+      @comp_ranks[rank.player.id][:sources][rank.source.id][:name] ||= rank.source.name
+      @comp_ranks[rank.player.id][:sources][rank.source.id][:weight] ||= rank.source.weight
+      @comp_ranks[rank.player.id][:sources][rank.source.id][:overall_rank] ||= rank.overall_rank
       @comp_ranks[rank.player.id][:overall_rank] += (rank.source.weight.to_f/100.0) * rank.overall_rank
     end
+    @comp_ranks
   end
 
   # GET /rankings/1

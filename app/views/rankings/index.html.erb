@@ -1,4 +1,4 @@
-<h1>Listing Rankings (<%= @qty %>)</h1>
+<h1>Listing Rankings</h1>
 
 <table>
   <thead>
@@ -8,22 +8,35 @@
       <th>Position</th>
       <th>Team</th>
       <th>Overall Rank</th>
+      <% Source.all.each do |source| %>
+        <th><%= source.name %></th>
+      <% end %>
       <th></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @comp_ranks.each do |id,comp_rank| %>
+    <% @comp_ranks.sort_by { |k, v| v[:overall_rank] }.each do |id,comp_rank| %>
       <tr>
         <td><%= id %></td>
         <td><%= comp_rank[:name] %></td>
         <td><%= comp_rank[:position] %></td>
         <td><%= comp_rank[:team] %></td>
-        <td><%= comp_rank[:overall_rank] %></td>
+        <td><%= comp_rank[:overall_rank].round(2) %></td>
+        <% Source.all.each do |source| %>
+          <% comp_rank[:sources].each do |k, crs| %>
+            <% if k == 1 %>
+              <td><%= crs[:overall_rank] || 0 %></td>
+            <% elsif k == 2 %> 
+              <td><%= crs[:overall_rank] || 0 %></td>
+            <% elsif k == 3 %> 
+              <td><%= crs[:overall_rank] || 0 %></td>
+            <% end %>
+          <% end %>
+        <% end %>
         <td></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<p><%= @loop_times %> | <%= @reset_times %> | <%= @reg_times %></p>
