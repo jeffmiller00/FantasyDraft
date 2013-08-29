@@ -5,6 +5,8 @@ class RankingsController < ApplicationController
   # GET /rankings.json
   def index
     @comp_ranks = {}
+    tol = 10
+
     Ranking.all.each do |rank|
       @comp_ranks[rank.player.id] ||= {}
       @comp_ranks[rank.player.id][:sources] ||= {}
@@ -17,6 +19,17 @@ class RankingsController < ApplicationController
       @comp_ranks[rank.player.id][:sources][rank.source.id][:weight] ||= rank.source.weight
       @comp_ranks[rank.player.id][:sources][rank.source.id][:overall_rank] ||= rank.overall_rank
       @comp_ranks[rank.player.id][:overall_rank] += (rank.source.weight.to_f/100.0) * rank.overall_rank
+    end
+    max = Ranking.maximum("overall_rank")
+    @comp_ranks.each do |key, irank|
+      if irank[:sources].size != 3
+        Source.all.each do |s|
+          if !irank[:sources].keys.include? s.id
+            irank[:overall_rank] += (max * (1+(tol/100))) * (s.weight.to_f/100.0)
+            puts irank[:overall_rank]
+          end
+        end
+      end
     end
     @comp_ranks
   end

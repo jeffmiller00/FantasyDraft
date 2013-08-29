@@ -23,15 +23,13 @@
         <td><%= comp_rank[:position] %></td>
         <td><%= comp_rank[:team] %></td>
         <td><%= comp_rank[:overall_rank].round(2) %></td>
-        <% Source.all.each do |source| %>
-          <% comp_rank[:sources].each do |k, crs| %>
-            <% if k == 1 %>
-              <td><%= crs[:overall_rank] || 0 %></td>
-            <% elsif k == 2 %> 
-              <td><%= crs[:overall_rank] || 0 %></td>
-            <% elsif k == 3 %> 
-              <td><%= crs[:overall_rank] || 0 %></td>
-            <% end %>
+        <% comp_rank[:sources].each do |k, crs| %>
+          <% if k == 1 %>
+            <td><%= crs[:overall_rank] || 0 %></td>
+          <% elsif k == 2 %> 
+            <td><%= crs[:overall_rank] || 0 %></td>
+          <% elsif k == 3 %> 
+            <td><%= crs[:overall_rank] || 0 %></td>
           <% end %>
         <% end %>
         <td></td>
