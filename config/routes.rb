@@ -18,6 +18,8 @@ FantasyDraft::Application.routes.draw do
   resources :sources
   resources :rankings
 
+  get 'pos/go'=> 'positions#go'
+  get 'src/go'=> 'sources#go'
   get 'fetch' => 'players#fetch'
   get 'clear' => 'players#clear'
 
