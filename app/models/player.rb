@@ -33,7 +33,7 @@ class Player < ActiveRecord::Base
         all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
 
         all.each do |player| 
-          if player.nil?
+          if player.empty?
             next
           end
 
