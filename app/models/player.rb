@@ -34,12 +34,16 @@ class Player < ActiveRecord::Base
         all.shift
 
         all.each do |player| 
-          player_info = Player.parse_player(player[1])
-          player_info[:pos] = Position.find_by_abbrev player.last.tr('0-9','')
-          player = Player.find_player(player_info)
+          puts player
 
-          if player.empty?
-            Player.create(first_name: player_info[:first], last_name: player_info[:last], team: player_info[:team], position: player_info[:pos])
+          if !player.blank?
+            player_info = Player.parse_player(player[1])
+            player_info[:pos] = Position.find_by_abbrev player.last.tr('0-9','')
+            player = Player.find_player(player_info)
+
+            if player.empty?
+              Player.create(first_name: player_info[:first], last_name: player_info[:last], team: player_info[:team], position: player_info[:pos])
+            end
           end
         end
       end
