@@ -19,6 +19,7 @@ FantasyDraft::Application.routes.draw do
   resources :rankings
 
   get 'fetch' => 'players#fetch'
+  get 'clear' => 'players#clear'
 
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -63,6 +63,12 @@ class PlayersController < ApplicationController
 
   def fetch
     @ret = Player.fetch
+    redirect_to rankings_url
+  end
+
+  def clear
+    Player.clear_picks!
+    redirect_to rankings_url
   end
 
   # PATCH/PUT /players/pick/1

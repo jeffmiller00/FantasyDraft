@@ -15,7 +15,7 @@ class Source < ActiveRecord::Base
                   site: 'ESPN')
     Source.create(name: 'Eric Karabell', 
                   url: 'http://espn.go.com/fantasy/football/story/_/page/NFLDK2K13_Karabell_200/eric-karabell-top-200-overall-fantasy-football-rankings-2013', 
-                  weight: 2, 
+                  weight: 20, 
                   site: 'ESPN')
   end
 end
