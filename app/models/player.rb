@@ -31,19 +31,18 @@ class Player < ActiveRecord::Base
         doc = Nokogiri::HTML(open(url))
         full_txt = doc.xpath("//table")
         all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
-        all.shift
 
         all.each do |player| 
-          puts player
+          if player.nil?
+            next
+          end
 
-          if !player.blank?
-            player_info = Player.parse_player(player[1])
-            player_info[:pos] = Position.find_by_abbrev player.last.tr('0-9','')
-            player = Player.find_player(player_info)
+          player_info = Player.parse_player(player[1])
+          player_info[:pos] = Position.find_by_abbrev player.last.tr('0-9','')
+          player = Player.find_player(player_info)
 
-            if player.empty?
-              Player.create(first_name: player_info[:first], last_name: player_info[:last], team: player_info[:team], position: player_info[:pos])
-            end
+          if player.empty?
+            Player.create(first_name: player_info[:first], last_name: player_info[:last], team: player_info[:team], position: player_info[:pos])
           end
         end
       end
