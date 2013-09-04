@@ -31,11 +31,10 @@ class Player < ActiveRecord::Base
         doc = Nokogiri::HTML(open(url))
         full_txt = doc.xpath("//table")
         all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
+        all.shift
 
         all.each do |player| 
-          if player.empty?
-            next
-          end
+          next if player.empty?
 
           player_info = Player.parse_player(player[1])
           player_info[:pos] = Position.find_by_abbrev player.last.tr('0-9','')

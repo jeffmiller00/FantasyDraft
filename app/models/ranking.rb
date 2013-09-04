@@ -25,6 +25,8 @@ class Ranking < ActiveRecord::Base
         all.shift
 
         all.each do |rank| 
+          next if rank.empty?
+
           player_info = Player.parse_player(rank[1])
           player_info[:pos] = Position.find_by_abbrev rank.last.tr('0-9','')
           player = Player.find_player(player_info)
