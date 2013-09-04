@@ -65,6 +65,14 @@ class PlayersController < ApplicationController
     @ret = Player.fetch
   end
 
+  # PATCH/PUT /players/pick/1
+  # PATCH/PUT /players/pick/1.json
+  def pick
+    @player = Player.find(params[:id])
+    @player.pick!
+    redirect_to rankings_url
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_player

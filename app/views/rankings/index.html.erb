@@ -11,29 +11,41 @@
       <% Source.all.each do |source| %>
         <th><%= source.name %></th>
       <% end %>
-      <th></th>
+      <th>Select</th>
     </tr>
   </thead>
 
   <tbody>
+    <% i = 0 %>
     <% @comp_ranks.sort_by { |k, v| v[:overall_rank] }.each do |id,comp_rank| %>
+      <% i += 1 %>
+      <% if i % 2 == 0 %>
+        <% classy = '#ffffff' %>
+      <% else %>
+        <% classy = '#cfcfcf' %>
+      <% end %>
       <tr>
-        <td><%= id %></td>
-        <td><%= comp_rank[:name] %></td>
-        <td><%= comp_rank[:position] %></td>
-        <td><%= comp_rank[:team] %></td>
-        <td><%= comp_rank[:overall_rank].round(2) %></td>
+        <td style="background-color: <%= classy %>"><%= id %></td>
+        <td style="background-color: <%= classy %>"><%= comp_rank[:name] %></td>
+        <td style="background-color: <%= classy %>"><%= comp_rank[:position] %></td>
+        <td style="background-color: <%= classy %>"><%= comp_rank[:team] %></td>
+        <td style="background-color: <%= classy %>"><%= comp_rank[:overall_rank].round(2) %></td>
         <% comp_rank[:sources].each do |k, crs| %>
           <% if k == 1 %>
-            <td><%= crs[:overall_rank] || 0 %></td>
+            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
           <% elsif k == 2 %> 
-            <td><%= crs[:overall_rank] || 0 %></td>
+            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
           <% elsif k == 3 %> 
-            <td><%= crs[:overall_rank] || 0 %></td>
+            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
           <% end %>
         <% end %>
-        <td></td>
-      </tr>
+        <td style="background-color: <%= classy %>">
+          <%= button_to 'Vote', 
+              { :controller => "players", 
+                :action => "pick", 
+                :id => id},
+              :method => 'post' %>
+        </td>
     <% end %>
   </tbody>
 </table>

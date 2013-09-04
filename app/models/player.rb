@@ -46,6 +46,24 @@ class Player < ActiveRecord::Base
     rescue Exception => e
       print e, "\n"
     end
+    Ranking.fetch
     Player.all
+  end
+
+  def self.clear_picks!
+    Player.all.each do |p|
+      next if !p.picked?
+      p.picked = false
+      p.save
+    end
+  end
+
+  def pick!
+    self.picked = true
+    self.save
+  end
+
+  def picked?
+    self.picked || false
   end
 end

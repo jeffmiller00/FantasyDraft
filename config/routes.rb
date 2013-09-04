@@ -1,11 +1,25 @@
 FantasyDraft::Application.routes.draw do
 
-  resources :players
+  #post 'players/:id/pick' => 'player#pick', as: 'pick_player'
+  #post 'players/pick/:id' => 'player#pick'
+
+  #controller :player do
+    #get 'player/show'     => :list
+    #get 'player/delete'   => :delete
+    #get 'player/edit/:id' => :edit
+  #end
+
+  resources :players do
+    member do
+      post 'pick'
+    end
+  end
   resources :positions
   resources :sources
   resources :rankings
 
   get 'fetch' => 'players#fetch'
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

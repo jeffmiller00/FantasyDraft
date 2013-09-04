@@ -8,6 +8,7 @@ class RankingsController < ApplicationController
     tol = 10
 
     Ranking.all.each do |rank|
+      next if Player.find(rank.player.id).picked?
       @comp_ranks[rank.player.id] ||= {}
       @comp_ranks[rank.player.id][:sources] ||= {}
       @comp_ranks[rank.player.id][:overall_rank] ||= 0.0
