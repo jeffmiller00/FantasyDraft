@@ -12,14 +12,13 @@ FantasyDraft::Application.routes.draw do
   resources :players do
     member do
       post 'pick'
+      post 'unpick'
     end
   end
   resources :positions
   resources :sources
   resources :rankings
 
-  get 'pos/go'=> 'positions#go'
-  get 'src/go'=> 'sources#go'
   get 'fetch' => 'players#fetch'
   get 'clear' => 'players#clear'
 
@@ -28,7 +27,7 @@ FantasyDraft::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  root 'welcome#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
