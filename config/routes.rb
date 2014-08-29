@@ -19,7 +19,7 @@ FantasyDraft::Application.routes.draw do
   resources :sources
   resources :rankings
 
-  get 'fetch' => 'players#fetch'
+  get 'fetch' => 'players#populate'
   get 'clear' => 'players#clear'
 
 
