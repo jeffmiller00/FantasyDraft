@@ -62,7 +62,7 @@ class PlayersController < ApplicationController
   end
 
   def fetch
-    @ret = Player.fetch
+    @ret = Player.populate
     redirect_to rankings_url
   end
 
