@@ -1,6 +1,6 @@
-<h1>Listing Rankings - Krista</h1>
+<h1>Rankings</h1>
 
-<table>
+<table class='table table-striped table-bordered table-hover'>
   <thead>
     <tr>
       <th>Player ID</th>
@@ -16,37 +16,41 @@
   </thead>
 
   <tbody>
-    <% i = 0 %>
-    <% @comp_ranks.sort_by { |k, v| v[:overall_rank] }.each do |id,comp_rank| %>
-      <% i += 1 %>
-      <% if i % 2 == 0 %>
-        <% classy = '#ffffff' %>
-      <% else %>
-        <% classy = '#cfcfcf' %>
-      <% end %>
+    <% @comp_ranks.each do |rank| %>
+      <% next if rank[:player].picked_recently? %>
       <tr>
-        <td style="background-color: <%= classy %>"><%= id %></td>
-        <td style="background-color: <%= classy %>"><%= comp_rank[:name] %></td>
-        <td style="background-color: <%= classy %>"><%= comp_rank[:position] %></td>
-        <td style="background-color: <%= classy %>"><%= comp_rank[:team] %></td>
-        <td style="background-color: <%= classy %>"><%= comp_rank[:overall_rank].round(2) %></td>
-        <% comp_rank[:sources].each do |k, crs| %>
+        <td><%= rank[:player].id %></td>
+        <td><%= rank[:player].first_name + ' ' + rank[:player].last_name %></td>
+        <td><%= rank[:player].position.name %></td>
+        <td><%= rank[:player].team %></td>
+        <td><%= rank[:overall_rank].round(2) %></td>
+        <% rank[:sources].each do |k, crs| %>
           <% if k == 1 %>
-            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
+            <td><%= crs || 0 %></td>
           <% elsif k == 2 %> 
-            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
+            <td><%= crs || 0 %></td>
           <% elsif k == 3 %> 
-            <td style="background-color: <%= classy %>"><%= crs[:overall_rank] || 0 %></td>
+            <td><%= crs || 0 %></td>
           <% end %>
         <% end %>
-        <td style="background-color: <%= classy %>">
-          <%= button_to 'Pick.', 
+
+        <td>
+        <% if rank[:player].picked? %>
+          <%= button_to 'Undo Pick.', 
               { :controller => "players", 
-                :action => "pick", 
-                :id => id},
-              :method => 'post' %>
+                :action => "unpick", 
+                :id => rank[:player].id},
+                :method => 'post',
+                :class => 'btn btn-danger' %>
+        <% else %>
+            <%= button_to 'Pick.', 
+                { :controller => "players", 
+                  :action => "pick", 
+                  :id => rank[:player].id},
+                  :method => 'post',
+                  :class => 'btn btn-success' %>
+        <% end %>
         </td>
     <% end %>
   </tbody>
 </table>
-
