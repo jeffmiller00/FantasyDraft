@@ -59,8 +59,7 @@ class Player < ActiveRecord::Base
   def self.clear_picks!
     Player.all.each do |p|
       next if !p.picked?
-      p.picked = false
-      p.save
+      p.unpick!
     end
   end
 
