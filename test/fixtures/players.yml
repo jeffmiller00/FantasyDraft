@@ -3,13 +3,11 @@
 one:
   first_name: MyString
   last_name: MyString
-  string: MyString
   position_id: 
   team: MyString
 
 two:
   first_name: MyString
   last_name: MyString
-  string: MyString
   position_id: 
   team: MyString

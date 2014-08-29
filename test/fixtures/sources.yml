@@ -2,10 +2,10 @@
 
 one:
   name: MyString
-  url: MyString
-  weight: 9.99
+  url: http://www.test.com
+  weight: 100
 
-two:
-  name: MyString
-  url: MyString
-  weight: 9.99
+#two:
+#  name: MyString
+#  url: MyString
+#  weight: 9.99
