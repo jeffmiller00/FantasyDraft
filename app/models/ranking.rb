@@ -20,13 +20,9 @@ class Ranking < ActiveRecord::Base
       all_players.each do |rank| 
         next if rank.empty?
 
-        player_info = Player.parse_player(rank[1])
-        player_info[:position] = Position.find_by_abbrev rank[2].tr('0-9','')
-        player = Player.find_player(player_info)
-        player = player.first
-
-        if player && player.id && Ranking.not_ranked?(s, player, rank.first.to_i)
-          r = Ranking.create(source: s, player: player, overall_rank: rank.first.to_i, pos_rank: rank.last.tr('a-zA-Z','').to_i)
+        player = Player.find_from_array rank
+        if player && player.id && Ranking.not_ranked?(s, player, rank.first.strip.to_i)
+          r = Ranking.create(source: s, player: player, overall_rank: rank.first.strip.to_i, pos_rank: rank.last.tr('a-zA-Z','').to_i)
         end
       end
     end
@@ -40,7 +36,6 @@ class Ranking < ActiveRecord::Base
     @default_rank ||= @max * (1+@tolerence)
 
     Player.all.each do |player|
-      #next if Player.find(rank.player.id).picked_recently?
       one_rank = {}
       one_rank[:player] = player
 
@@ -50,13 +45,18 @@ class Ranking < ActiveRecord::Base
         player_ranks[rnk.source_id] = rnk.overall_rank
       end
 
-      if player_ranks.size != 3
+      if player_ranks.size != Source.all.size
         Source.all.each do |s|
           player_ranks[s.id] = player_ranks[s.id] || @default_rank
         end
       end
-
-      one_rank[:overall_rank] = player_ranks.values.inject{ |sum, el| sum + el }.to_f / player_ranks.size
+      one_rank[:overall_rank] = 0
+      player_ranks.each do |source_id, val|
+        s = Source.find source_id
+        one_rank[:overall_rank] = one_rank[:overall_rank] + ((s.weight.to_f/100.0) * val)
+      end
+      #one_rank[:overall_rank] = player_ranks.values.inject{ |sum, el| sum + el }.to_f / player_ranks.size
+#require 'pry'; binding.pry if one_rank[:player].id == 4
       one_rank[:sources] = player_ranks
       @all_ranks << one_rank
     end

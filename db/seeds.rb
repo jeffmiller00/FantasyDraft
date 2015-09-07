@@ -6,20 +6,22 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-Source.create(name: 'Matthew Berry', 
-              url: 'http://espn.go.com/fantasy/football/story/_/page/TMR140326/matthew-berry-2014-fantasy-football-rankings-top-200', 
-              weight: 45, 
+Source.create(name: 'Matthew Berry',
+              url: 'http://espn.go.com/fantasy/football/story/_/page/BerryRanks150311/matthew-berry-2015-fantasy-football-rankings',
+              weight: 41,
               site: 'ESPN')
-Source.create(name: 'Christopher Harris', 
-              url: 'http://espn.go.com/fantasy/football/story/_/id/11164366/2014-fantasy-football-top-200-rankings', 
-              weight: 35, 
+Source.create(name: 'Field Yates',
+              url: 'http://espn.go.com/fantasy/football/story/_/page/Yatesranks2015/field-yates-2015-fantasy-football-rankings',
+              weight: 25,
               site: 'ESPN')
-Source.create(name: 'Eric Karabell', 
-              url: 'http://espn.go.com/fantasy/football/story/_/page/KarabellTop200/karabell-2014-preseason-fantasy-football-rankings-top-200', 
-              weight: 20,
+Source.create(name: 'Tristan H. Cockcroft',
+              url: 'http://espn.go.com/fantasy/football/story/_/id/12880160/tristan-h-cockcroft-2015-fantasy-football-rankings',
+              weight: 17,
               site: 'ESPN')
-=begin
-=end
+Source.create(name: 'Eric Karabell',
+              url: 'http://espn.go.com/fantasy/football/story/_/page/Karabellranks150311/eric-karabell-2015-fantasy-football-rankings',
+              weight: 17,
+              site: 'ESPN')
 
 Position.create(name: 'Quarterback', abbrev: 'QB')
 Position.create(name: 'Running Back', abbrev: 'RB')
