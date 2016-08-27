@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130904030002) do
+ActiveRecord::Schema.define(version: 20160826203132) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "players", force: true do |t|
     t.string   "first_name"
@@ -23,7 +26,7 @@ ActiveRecord::Schema.define(version: 20130904030002) do
     t.boolean  "picked"
   end
 
-  add_index "players", ["position_id"], name: "index_players_on_position_id"
+  add_index "players", ["position_id"], name: "index_players_on_position_id", using: :btree
 
   create_table "positions", force: true do |t|
     t.string   "name"
@@ -41,8 +44,8 @@ ActiveRecord::Schema.define(version: 20130904030002) do
     t.datetime "updated_at"
   end
 
-  add_index "rankings", ["player_id"], name: "index_rankings_on_player_id"
-  add_index "rankings", ["source_id"], name: "index_rankings_on_source_id"
+  add_index "rankings", ["player_id"], name: "index_rankings_on_player_id", using: :btree
+  add_index "rankings", ["source_id"], name: "index_rankings_on_source_id", using: :btree
 
   create_table "sources", force: true do |t|
     t.string   "name"
@@ -50,7 +53,7 @@ ActiveRecord::Schema.define(version: 20130904030002) do
     t.decimal  "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "site"
+    t.string   "xpath"
   end
 
 end

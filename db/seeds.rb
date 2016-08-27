@@ -6,22 +6,30 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+
 Source.create(name: 'Matthew Berry',
-              url: 'http://espn.go.com/fantasy/football/story/_/page/BerryRanks150311/matthew-berry-2015-fantasy-football-rankings',
-              weight: 41,
-              site: 'ESPN')
+              url: 'http://www.espn.com/fantasy/football/story/_/id/14765088/matthew-berry-very-early-2016-fantasy-football-rankings-nfl',
+              weight: 40,
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[3]')
+=begin
 Source.create(name: 'Field Yates',
-              url: 'http://espn.go.com/fantasy/football/story/_/page/Yatesranks2015/field-yates-2015-fantasy-football-rankings',
+              url: 'http://www.espn.com/fantasy/football/story/_/id/17171463/field-yates-qb-rb-wr-te-d-st-kicker-rankings-2016-fantasy-football-nfl',
               weight: 25,
-              site: 'ESPN')
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
+=end
 Source.create(name: 'Tristan H. Cockcroft',
-              url: 'http://espn.go.com/fantasy/football/story/_/id/12880160/tristan-h-cockcroft-2015-fantasy-football-rankings',
-              weight: 17,
-              site: 'ESPN')
+              url: 'http://www.espn.com/fantasy/football/story/_/id/15564986/tristan-h-cockcroft-2016-fantasy-football-rankings-nfl',
+              weight: 15,
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
 Source.create(name: 'Eric Karabell',
-              url: 'http://espn.go.com/fantasy/football/story/_/page/Karabellranks150311/eric-karabell-2015-fantasy-football-rankings',
-              weight: 17,
-              site: 'ESPN')
+              url: 'http://www.espn.com/fantasy/football/story/_/id/15592938/eric-karabell-top-100-rankings-2016-fantasy-football-nfl',
+              weight: 10,
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
+# Source.create(name: 'Mike Clay',
+#               url: 'http://www.espn.com/fantasy/football/story/_/id/14472239/mike-clay-2016-fantasy-football-rankings-nfl',
+#               weight: 10,
+#               xpath: '')
+
 
 Position.create(name: 'Quarterback', abbrev: 'QB')
 Position.create(name: 'Running Back', abbrev: 'RB')
