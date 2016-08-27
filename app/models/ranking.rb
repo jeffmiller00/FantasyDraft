@@ -6,23 +6,27 @@ class Ranking < ActiveRecord::Base
   belongs_to :player
 
   validates :overall_rank, presence: true
-  validates :pos_rank, presence: true
+  #validates :pos_rank, presence: true
 
-  def self.not_ranked? source, player, overall_rank
-    results = Ranking.where('source_id' => source, 'player_id' => player, 'overall_rank' => overall_rank)
+  def self.not_ranked? source, player
+    results = Ranking.where(source: source,
+                            player: player)
     return results.empty?
   end
 
   def self.populate
-    Source.all.each do |s| 
-      all_players = Player.get_external_data s.url
+    Source.all.each do |source| 
+      all_players = source.fetch
 
-      all_players.each do |rank| 
-        next if rank.empty?
+      all_players.each do |player|
+        next if player.empty?
 
-        player = Player.find_from_array rank
-        if player && player.id && Ranking.not_ranked?(s, player, rank.first.strip.to_i)
-          r = Ranking.create(source: s, player: player, overall_rank: rank.first.strip.to_i, pos_rank: rank.last.tr('a-zA-Z','').to_i)
+        found_player = Player.find_player(player).first
+
+        if found_player && found_player.id && Ranking.not_ranked?(source, found_player)
+          r = Ranking.create(source: source,
+                             player: found_player,
+                             overall_rank: player[:rank].to_i)
         end
       end
     end
@@ -31,7 +35,7 @@ class Ranking < ActiveRecord::Base
 
   def self.get_all_by_player
     @all_ranks = []
-    @max ||= Ranking.maximum("overall_rank")
+    @max ||= Ranking.maximum("overall_rank") || 255
     @tolerence = 0.1
     @default_rank ||= @max * (1+@tolerence)
 
