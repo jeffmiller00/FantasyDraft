@@ -8,7 +8,7 @@ class Source < ActiveRecord::Base
     all_array = []
     doc = Nokogiri::HTML(open(self.url))
     full_txt = doc.xpath(self.xpath).first
-    all_array = parse_espn_data full_txt if self.espn?
+    all_array = parse_data full_txt
     all_hash = self.array_to_hash all_array
 
     all_hash
@@ -19,8 +19,12 @@ class Source < ActiveRecord::Base
 
     # Need to add all these players to an array of hashes.
     array.each do |player_ary|
-      player_hash   = simple_parse(player_ary)
-      player_hash ||= complex_parse(player_ary)
+      if self.espn?
+        player_hash   = simple_espn_parse(player_ary)
+        player_hash ||= complex_espn_parse(player_ary)
+      else
+        player_hash   = pm_parse(player_ary)
+      end
       all_players << player_hash
     end
 
@@ -29,7 +33,7 @@ class Source < ActiveRecord::Base
 
   protected
 
-  def simple_parse array
+  def simple_espn_parse array
     return unless array.size <= 3
 
     player_hash = {}
@@ -46,7 +50,18 @@ binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Posi
     player_hash
   end
 
-  def complex_parse array
+  def pm_parse array
+    player_hash = {}
+    player_hash[:rank], player_hash[:first_name], player_hash[:last_name] = set_rank_name "#{array[0]} #{array[1]}"
+    player_hash[:position]  = set_position array[2]
+    player_hash[:team] = array[3]
+    player_hash[:team] = 'DEFENSE' if player_hash[:team].blank?
+binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Position) ||
+               player_hash[:team].blank?)
+    player_hash
+  end
+
+  def complex_espn_parse array
     return unless array.size > 3
 
     player_hash = {}
@@ -74,7 +89,7 @@ binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Posi
   def set_team string
   end
 
-  def   parse_espn_data full_txt
+  def   parse_data full_txt
     all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
 
     while all[0].empty? do
@@ -85,5 +100,9 @@ binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Posi
 
   def espn?
     !!(self.url.include? 'espn.com')
+  end
+
+  def pm?
+    !!(self.url.include? 'predictionmachine.com')
   end
 end

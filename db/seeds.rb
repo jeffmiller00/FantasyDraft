@@ -9,26 +9,24 @@
 
 Source.create(name: 'Matthew Berry',
               url: 'http://www.espn.com/fantasy/football/story/_/id/14765088/matthew-berry-very-early-2016-fantasy-football-rankings-nfl',
-              weight: 40,
+              weight: 35,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[3]')
-=begin
+Source.create(name: 'Prediction Machine',
+              url: 'http://predictionmachine.com/fantasy-football-rankings-experts-2016-season',
+              weight: 25,
+              xpath: '//*[@id="BlogContent"]/table[1]/tbody[2]')
 Source.create(name: 'Field Yates',
               url: 'http://www.espn.com/fantasy/football/story/_/id/17171463/field-yates-qb-rb-wr-te-d-st-kicker-rankings-2016-fantasy-football-nfl',
-              weight: 25,
+              weight: 20,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
-=end
 Source.create(name: 'Tristan H. Cockcroft',
               url: 'http://www.espn.com/fantasy/football/story/_/id/15564986/tristan-h-cockcroft-2016-fantasy-football-rankings-nfl',
-              weight: 15,
+              weight: 10,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
 Source.create(name: 'Eric Karabell',
               url: 'http://www.espn.com/fantasy/football/story/_/id/15592938/eric-karabell-top-100-rankings-2016-fantasy-football-nfl',
               weight: 10,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]')
-# Source.create(name: 'Mike Clay',
-#               url: 'http://www.espn.com/fantasy/football/story/_/id/14472239/mike-clay-2016-fantasy-football-rankings-nfl',
-#               weight: 10,
-#               xpath: '')
 
 
 Position.create(name: 'Quarterback', abbrev: 'QB')

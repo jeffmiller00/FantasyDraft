@@ -22,7 +22,6 @@ class Ranking < ActiveRecord::Base
         next if player.empty?
 
         found_player = Player.find_player(player).first
-
         if found_player && found_player.id && Ranking.not_ranked?(source, found_player)
           r = Ranking.create(source: source,
                              player: found_player,
