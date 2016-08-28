@@ -58,8 +58,7 @@ class Ranking < ActiveRecord::Base
         s = Source.find source_id
         one_rank[:overall_rank] = one_rank[:overall_rank] + ((s.weight.to_f/100.0) * val)
       end
-      #one_rank[:overall_rank] = player_ranks.values.inject{ |sum, el| sum + el }.to_f / player_ranks.size
-#require 'pry'; binding.pry if one_rank[:player].id == 4
+
       one_rank[:sources] = player_ranks
       @all_ranks << one_rank
     end

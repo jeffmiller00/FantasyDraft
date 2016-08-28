@@ -46,7 +46,6 @@ class Source < ActiveRecord::Base
       player_hash[:team]  = array[2]
     end
     player_hash[:team] ||= 'JEFF'
-binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Position))
     player_hash
   end
 
@@ -56,8 +55,6 @@ binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Posi
     player_hash[:position]  = set_position array[2]
     player_hash[:team] = array[3]
     player_hash[:team] = 'DEFENSE' if player_hash[:team].blank?
-binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Position) ||
-               player_hash[:team].blank?)
     player_hash
   end
 
@@ -69,7 +66,6 @@ binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Posi
     player_hash[:position]  = set_position array[3]
     player_hash[:team]  = array[1]
     player_hash[:team] ||= 'JEFF'
-binding.pry if(player_hash[:position].nil? || !player_hash[:position].is_a?(Position))
     player_hash
   end
 
