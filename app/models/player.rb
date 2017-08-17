@@ -67,7 +67,7 @@ class Player < ActiveRecord::Base
 
   def self.parse_player player_string
     player_hash = {}
-    player_arry = player_string.split(' ')[1..2]
+    player_arry = player_string.gsub(/,/,'').split(' ')[1..2]
 
     player_hash[:first_name] = player_arry.first.strip
     player_hash[:last_name]  = player_arry.last.strip
