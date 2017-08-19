@@ -17,15 +17,16 @@ class Ranking < ActiveRecord::Base
   def self.populate
     Source.all.each do |source| 
       all_players = source.fetch
+      all_players += source.fetch('http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=101') if source.nfl?
 
       all_players.each do |player|
         next if player.empty?
 
         found_player = Player.find_player(player).first
         if found_player && found_player.id && Ranking.not_ranked?(source, found_player)
-          r = Ranking.create(source: source,
-                             player: found_player,
-                             overall_rank: player[:rank].to_i)
+          Ranking.create(source: source,
+                         player: found_player,
+                         overall_rank: player[:rank].to_i)
         end
       end
     end
@@ -48,11 +49,10 @@ class Ranking < ActiveRecord::Base
         player_ranks[rnk.source_id] = rnk.overall_rank
       end
 
-      if player_ranks.size != Source.all.size
-        Source.all.each do |s|
-          player_ranks[s.id] = player_ranks[s.id] || @default_rank
-        end
+      Source.all.each do |s|
+        player_ranks[s.id] = @default_rank if player_ranks[s.id].to_i == 0
       end
+
       one_rank[:overall_rank] = 0
       player_ranks.each do |source_id, val|
         s = Source.find source_id

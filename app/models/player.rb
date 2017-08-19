@@ -19,19 +19,8 @@ class Player < ActiveRecord::Base
 
   def self.populate
     Source.all.each do |source|
-      all_players = source.fetch
-
-      all_players.each do |player|
-        next if player.blank?
-
-        found_player = Player.find_player(player)
-        if found_player.empty?
-          Player.create!(first_name: player[:first_name],
-                         last_name:  player[:last_name],
-                         team:       player[:team],
-                         position:   player[:position])
-        end
-      end
+      add_players source.fetch
+      add_players(source.fetch('http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=101')) if source.nfl?
     end
 
     Ranking.populate
@@ -64,6 +53,20 @@ class Player < ActiveRecord::Base
   end
 
   private
+
+  def self.add_players players_arry
+    players_arry.each do |player|
+      next if player.blank?
+
+      found_player = Player.find_player(player)
+      if found_player.empty?
+        Player.create!(first_name: player[:first_name],
+                       last_name:  player[:last_name],
+                       team:       player[:team],
+                       position:   player[:position])
+      end
+    end
+  end
 
   def self.parse_player player_string
     player_hash = {}

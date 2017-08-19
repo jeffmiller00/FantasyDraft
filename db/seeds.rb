@@ -6,31 +6,30 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-
 Source.create(name: 'Matthew Berry',
               url: 'http://www.espn.com/fantasy/football/story/_/page/17RanksPreseason200nonPPR/2017-fantasy-football-standard-rankings-non-ppr-top-200?mb',
-              weight: 32,
+              weight: 30,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 Source.create(name: 'Field Yates',
               url: 'http://www.espn.com/fantasy/football/story/_/page/17RanksPreseason200nonPPR/2017-fantasy-football-standard-rankings-non-ppr-top-200?fy',
-              weight: 10,
+              weight: 15,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 Source.create(name: 'Mike Clay',
               url: 'http://www.espn.com/fantasy/football/story/_/page/17RanksPreseason200nonPPR/2017-fantasy-football-standard-rankings-non-ppr-top-200?mc',
-              weight: 15,
+              weight: 7,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 Source.create(name: 'Tristan H. Cockcroft',
               url: 'http://www.espn.com/fantasy/football/story/_/page/17RanksPreseason200nonPPR/2017-fantasy-football-standard-rankings-non-ppr-top-200?tc',
-              weight: 15,
+              weight: 14,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 Source.create(name: 'Eric Karabell',
               url: 'http://www.espn.com/fantasy/football/story/_/page/17RanksPreseason200nonPPR/2017-fantasy-football-standard-rankings-non-ppr-top-200?ek',
-              weight: 23,
+              weight: 14,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
-# Source.create(name: 'NFL.com',
-#               url: 'http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats',
-#               weight: 20,
-#               xpath: '//*[@id="BlogContent"]/table[1]/tbody[2]')
+Source.create(name: 'NFL.com',
+              url: 'http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats',
+              weight: 20,
+              xpath: '//*[tbody]')
 
 
 Position.create(name: 'Quarterback', abbrev: 'QB')

@@ -4,13 +4,14 @@ class Source < ActiveRecord::Base
   validates :weight, numericality: true
   validates :xpath, presence: true
 
-  def fetch
+  def fetch url=nil
     all_array = []
-    doc = Nokogiri::HTML(open(self.url))
+    url = self.url if url.nil?
+    doc = Nokogiri::HTML(open(url))
+
     full_txt = doc.xpath(self.xpath).first
     all_array = parse_data full_txt
     all_hash = self.array_to_hash all_array
-
     all_hash
   end
 
@@ -28,6 +29,14 @@ class Source < ActiveRecord::Base
     end
 
     all_players
+  end
+
+  def espn?
+    !!(self.url.include? 'espn.com')
+  end
+
+  def nfl?
+    !!(self.url.include? 'nfl.com')
   end
 
   protected
@@ -59,14 +68,50 @@ class Source < ActiveRecord::Base
 
   def nfl_parse array
     player_hash = {}
-    player_hash[:rank], player_hash[:first_name], player_hash[:last_name] = set_rank_name "#{array[0]} #{array[1]}"
-    player_hash[:position]  = set_position array[2]
-    player_hash[:team] = array[3]
-    player_hash[:team] = 'DEFENSE' if player_hash[:team].blank?
+    player_hash[:rank] = array[0].to_i
+    player_hash[:first_name], player_hash[:last_name] = parse_name array[1]
+    if array[1].strip.split(' ')[4].nil?
+      player_hash[:team], player_hash[:position] = set_def_team array[1].strip.split(' ')
+binding.pry if player_hash[:position].nil?
+    else
+      player_hash[:team] = map_to_espn_team array[1].strip.split(' ')[4].upcase
+    end
+    player_hash[:position] ||= set_position array[1].strip.split(' ')[2]
+
     player_hash
   end
 
-#reload!; Player.populate
+  def set_def_team team_arr
+    team = nil
+    team = 'NE' if team_arr[2] == 'Patriots'
+    if team.nil?
+      case team_arr[0]
+      when 'Kansas'
+        team = 'KC'
+      when 'Minnesota'
+        team = 'MIN'
+      when 'Houston'
+        team = 'HOU'
+      when 'Arizona'
+        team = 'ARI'
+      else
+        team = 'NONE'
+        binding.pry
+      end
+    end
+    [team, Position.find_by_abbrev('DST')]
+  end
+
+  def map_to_espn_team team
+    team = 'JAC' if team == 'JAX'
+    team = 'LAR' if team == 'LA'
+    team
+  end
+
+  def parse_name string
+    name_arry = string.strip.split(' ')
+    [name_arry[0], name_arry[1]]
+  end
 
   def parse_raw string
     string_parts = string.strip.split(' ')
@@ -74,15 +119,15 @@ class Source < ActiveRecord::Base
     string_parts.shift.strip # Remove the overall rank
     team  = string_parts.pop.strip
     pos   = set_position(string_parts.pop.strip)
-    fname = string_parts.shift.strip
-    lname = string_parts.shift.strip
+    fname = string_parts.shift.strip.gsub(/\W\d*/, '')
+    lname = string_parts.shift.strip.gsub(/\W\d*/, '')
 
-    return [fname, lname, pos, team]
+    [fname, lname, pos, team]
   end
 
   def set_position string
     return if string.nil?
-    pos = string.gsub(/\W/, '').strip
+    pos = string.gsub(/\W\d*/, '').strip
     pos = 'DST' if pos.include?('D/ST') || pos.include?('DEF')
     Position.find_by_abbrev(pos)
   end
@@ -94,13 +139,5 @@ class Source < ActiveRecord::Base
       all.shift
     end
     all
-  end
-
-  def espn?
-    !!(self.url.include? 'espn.com')
-  end
-
-  def nfl?
-    !!(self.url.include? 'nfl.com')
   end
 end

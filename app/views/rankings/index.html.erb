@@ -26,17 +26,9 @@
         <td><%= rank[:overall_rank].round(2) %></td>
         <% rank[:sources].each do |k, crs| %>
           <% crs = crs.round(2) %>
-          <% if k == 1 %>
-            <td><%= crs || 0 %></td>
-          <% elsif k == 2 %>
-            <td><%= crs || 0 %></td>
-          <% elsif k == 3 %>
-            <td><%= crs || 0 %></td>
-          <% elsif k == 4 %>
-            <td><%= crs || 0 %></td>
-          <% elsif k == 5 %>
-            <td><%= crs || 0 %></td>
-          <% end %>
+
+          <td><%= crs || 0 %></td>
+
         <% end %>
 
         <td>
