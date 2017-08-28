@@ -63,6 +63,7 @@ class Source < ActiveRecord::Base
     else
       binding.pry
     end
+
     player_hash
   end
 
@@ -72,11 +73,11 @@ class Source < ActiveRecord::Base
     player_hash[:first_name], player_hash[:last_name] = parse_name array[1]
     if array[1].strip.split(' ')[4].nil?
       player_hash[:team], player_hash[:position] = set_def_team array[1].strip.split(' ')
-binding.pry if player_hash[:position].nil?
     else
       player_hash[:team] = map_to_espn_team array[1].strip.split(' ')[4].upcase
     end
     player_hash[:position] ||= set_position array[1].strip.split(' ')[2]
+    player_hash[:position] ||= set_position 'DST' # This ensures KC def gets a position
 
     player_hash
   end
