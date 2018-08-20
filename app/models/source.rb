@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class Source < ActiveRecord::Base
   validates :name, uniqueness: true
   validates :url, uniqueness: true
@@ -8,16 +10,15 @@ class Source < ActiveRecord::Base
     all_array = []
     url = self.url if url.nil?
     doc = Nokogiri::HTML(open(url))
-
-    full_txt = doc.xpath(self.xpath).first
+binding.pry
+    full_txt = doc.xpath(self.xpath)[1]
     all_array = parse_data full_txt
-    all_hash = self.array_to_hash all_array
-    all_hash
+    puts self.array_to_hash all_array
+    self.array_to_hash all_array
   end
 
   def array_to_hash array
     all_players = []
-
     # Need to add all these players to an array of hashes.
     array.each do |player_ary|
       if self.espn?
@@ -43,26 +44,13 @@ class Source < ActiveRecord::Base
 
   def espn_parse array
     player_hash = {}
-    player_hash[:raw] = array[0]
 
+    player_hash[:rank] = array[0].split('.')[0].to_i
     player_hash[:first_name],
-    player_hash[:last_name],
-    player_hash[:position],
-    player_hash[:team] = parse_raw player_hash[:raw]
+    player_hash[:last_name] = parse_name array[0].split('.',2)[1]
+    player_hash[:position] = set_position array[1]
 
-    if self.name.include? 'Berry'
-      player_hash[:rank] = array[3].to_i
-    elsif self.name.include? 'Clay'
-      player_hash[:rank] = array[4].to_i
-    elsif self.name.include? 'Cockcroft'
-      player_hash[:rank] = array[5].to_i
-    elsif self.name.include? 'Karabell'
-      player_hash[:rank] = array[6].to_i
-    elsif self.name.include? 'Yates'
-      player_hash[:rank] = array[7].to_i
-    else
-      binding.pry
-    end
+    player_hash[:team] = array[2]
 
     player_hash
   end
@@ -72,7 +60,7 @@ class Source < ActiveRecord::Base
     player_hash[:rank] = array[0].to_i
     player_hash[:first_name], player_hash[:last_name] = parse_name array[1]
     if array[1].strip.split(' ')[4].nil?
-      player_hash[:team], player_hash[:position] = set_def_team array[1].strip.split(' ')
+      player_hash[:team], player_hash[:position] = set_def_team array[1].strip.split(' ', -2)
     else
       player_hash[:team] = map_to_espn_team array[1].strip.split(' ')[4].upcase
     end
