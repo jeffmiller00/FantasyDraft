@@ -15,13 +15,13 @@ Position.create(name: 'Defense & Special Teams', abbrev: 'DST')
 
 Source.create(name: 'NFL.com',
               url: 'https://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=1',
-              weight: 35,
+              weight: 50,
               xpath: '//*[@id="primaryContent"]//tbody')
 
-# Source.create(name: 'NFL.com',
-#               url: 'http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats',
-#               weight: 26,
-#               xpath: '//table/tbody')
+Source.create(name: 'The Ringer',
+              url: 'https://www.theringer.com/2019/8/5/20752394/fantasy-football-draft-rankings-top-150-standard-leagues',
+              weight: 50,
+              xpath: '//*[@id="content"]//h4')
 
 # Source.create(name: 'ESPN',
 #               url: 'http://www.espn.com/fantasy/football/story/_/page/18RanksPreseason300PPR/2018-fantasy-football-ppr-rankings-top-300',

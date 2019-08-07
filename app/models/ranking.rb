@@ -17,7 +17,7 @@ class Ranking < ActiveRecord::Base
   def self.populate
     Source.all.each do |source|
       all_players = source.fetch
-      all_players += source.fetch('http://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=101') if source.nfl?
+      all_players += source.fetch('https://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=101') if source.nfl?
 
       all_players.each do |player|
         next if player.empty?

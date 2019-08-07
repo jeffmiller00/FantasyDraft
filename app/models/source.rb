@@ -11,7 +11,8 @@ class Source < ActiveRecord::Base
     url = self.url if url.nil?
     doc = Nokogiri::HTML(open(url))
 # binding.pry  # Source 1) Get to the list
-    # xpath = '//*[@id="primaryContent"]//tbody'
+    # xpath = '//*[@id="content"]//h4'
+
     full_txt = doc.xpath(self.xpath)
     # full_txt = full_txt[self.id - 4].css('div.player-row') if self.cbs?
     all_array = parse_data full_txt
@@ -30,12 +31,18 @@ class Source < ActiveRecord::Base
         player_hash   = cbs_parse(player_ary)
       elsif self.nfl?
         player_hash   = nfl_parse(player_ary)
+      elsif self.ringer?
+        player_hash   = ringer_parse(player_ary)
       else
       end
       all_players << player_hash
     end
 
     all_players
+  end
+
+  def cbs?
+    !!(self.url.include? 'cbssports.com')
   end
 
   def espn?
@@ -46,11 +53,23 @@ class Source < ActiveRecord::Base
     !!(self.url.include? 'nfl.com')
   end
 
-  def cbs?
-    !!(self.url.include? 'cbssports.com')
+  def ringer?
+    !!(self.url.include? 'ringer.com')
   end
 
   protected
+
+  def cbs_parse array
+    player_hash = {}
+    player_hash[:rank] = array[0].to_i
+    player_hash[:first_name] = array[1]
+    player_hash[:last_name] = array[2]
+    player_hash[:team] = map_to_espn_team array[3].upcase
+    player_hash[:position] ||= set_position array[4].strip
+    player_hash[:position] ||= set_position 'DST' # This ensures KC def gets a position
+
+    player_hash
+  end
 
   def espn_parse array
     player_hash = {}
@@ -71,18 +90,6 @@ class Source < ActiveRecord::Base
     player_hash
   end
 
-  def cbs_parse array
-    player_hash = {}
-    player_hash[:rank] = array[0].to_i
-    player_hash[:first_name] = array[1]
-    player_hash[:last_name] = array[2]
-    player_hash[:team] = map_to_espn_team array[3].upcase
-    player_hash[:position] ||= set_position array[4].strip
-    player_hash[:position] ||= set_position 'DST' # This ensures KC def gets a position
-
-    player_hash
-  end
-
   def nfl_parse array
     player_hash = {}
     player_hash[:rank] = array[0].to_i
@@ -98,6 +105,18 @@ class Source < ActiveRecord::Base
     player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
 
     # binding.pry if player_hash[:rank]>=19
+
+    player_hash
+  end
+
+  def ringer_parse array
+    player_hash = {}
+    player_hash[:rank] = array[0].to_i
+    player_hash[:team] = array.last.strip
+    player_hash[:position] = array[-2].sub!(',','').strip
+    player_hash[:first_name], player_hash[:last_name] = array[1..2].map{|n| n.strip.sub(',','')}
+
+    # binding.pry if player_hash[:position].size > 2
 
     player_hash
   end
@@ -164,20 +183,30 @@ class Source < ActiveRecord::Base
   end
 
   def parse_data full_txt
-    unless self.cbs?
-# binding.pry  # Source 2) Parse the list to an array
+    all = []
+    if self.nfl?
       all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
 
       while all[0].empty? do
         all.shift
       end
-    else
-      all = []
-      full_txt.each do |row|
-        single = row.search('div').map { |div| div.text.strip }
-        single[1] = single[1].split(/\s+/)
-        all << single.flatten
+    elsif self.ringer?
+      all = full_txt.map { |td| td.text.strip.split(' ') }
+
+# binding.pry  # Source 2) Parse the list to an array
+      while all[0].include?('•') do
+        all.shift
       end
+
+
+    # unless self.cbs?
+    # else
+    #   all = []
+    #   full_txt.each do |row|
+    #     single = row.search('div').map { |div| div.text.strip }
+    #     single[1] = single[1].split(/\s+/)
+    #     all << single.flatten
+    #   end
     end
 
     all
