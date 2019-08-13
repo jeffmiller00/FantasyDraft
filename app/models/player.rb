@@ -10,13 +10,6 @@ class Player < ActiveRecord::Base
   validates :team, presence: true
 
 
-  def self.parse_player_pos raw_pos
-    return if raw_pos.nil?
-    pos = raw_pos.split(' ').last.gsub(/\d/, '').strip
-    pos = 'DST' if pos.include?('D/ST') || pos.include?('DEF')
-    Position.find_by_abbrev(pos)
-  end
-
   def self.populate
     Source.all.each do |source|
       add_players source.fetch

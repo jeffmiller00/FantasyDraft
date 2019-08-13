@@ -93,18 +93,25 @@ class Source < ActiveRecord::Base
   def nfl_parse array
     player_hash = {}
     player_hash[:rank] = array[0].to_i
-    # binding.pry if player_hash[:rank]==19
     array[1].sub!(' NWT','')
-    array[1].sub!(' News','')
-    array[1].sub!(' View','')
-    array[1].strip!
-    player_hash[:team] = array[1][-3..].strip
-    array[1] = array[1].rpartition(player_hash[:team])[0]
-    array[1].sub!(' - ','')
-    player_hash[:position] = array[1][-3..].strip
-    player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
-
-    # binding.pry if player_hash[:rank]>=19
+    array[1].sub!(' View News','')
+    array[1].sub!(' View Videos','')
+    array[1] = array[1].strip
+    if array[1].include?('DEF')
+      player_hash[:position] = set_position 'DST'
+      array[1].sub!(' DEF','')
+      player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
+      player_hash[:team] = set_def_team [player_hash[:first_name], player_hash[:last_name]]
+    else
+      player_hash[:team] = array[1][-3..].strip
+      player_hash[:team] = array[1][-2..].strip if ['NO', 'NE'].include?(player_hash[:team][-2..])
+      array[1] = array[1].rpartition(player_hash[:team])[0]
+      array[1].sub!(' - ','')
+      player_hash[:position] = set_position array[1][-3..].strip
+      player_hash[:position] = set_position('K') if player_hash[:position].blank? && array[1].last == 'K'
+      binding.pry if player_hash[:position].blank?
+      player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
+    end
 
     player_hash
   end
@@ -113,7 +120,7 @@ class Source < ActiveRecord::Base
     player_hash = {}
     player_hash[:rank] = array[0].to_i
     player_hash[:team] = array.last.strip
-    player_hash[:position] = array[-2].sub!(',','').strip
+    player_hash[:position] = set_position array[-2].sub!(',','').strip
     player_hash[:first_name], player_hash[:last_name] = array[1..2].map{|n| n.strip.sub(',','')}
 
     # binding.pry if player_hash[:position].size > 2
@@ -130,10 +137,9 @@ class Source < ActiveRecord::Base
   end
 
   def set_def_team team_arr
-    team = nil
-    team = 'NE' if team_arr[2] == 'Patriots'
-    if team.nil?
-      case team_arr[0]
+    case team_arr[0]
+      when 'Chicago'
+        team = 'CHI'
       when 'Kansas'
         team = 'KC'
       when 'Minnesota'
@@ -146,10 +152,9 @@ class Source < ActiveRecord::Base
         team = 'JAC'
       else
         team = 'NONE'
-        binding.pry unless team_arr[0]=='Jordan'
-      end
     end
-    [team, Position.find_by_abbrev('DST')]
+
+    team
   end
 
   def map_to_espn_team team
