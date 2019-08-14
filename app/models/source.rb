@@ -105,9 +105,8 @@ class Source < ActiveRecord::Base
     else
       player_hash[:team] = Team.find_by_abbrev array[1][-3..].strip
       player_hash[:team] = Team.find_by_abbrev array[1][-2..].strip if ['NO', 'NE'].include?(player_hash[:team][-2..])
-      array[1] = array[1].rpartition(player_hash[:team])[0]
-      array[1].sub!(' - ','')
-      player_hash[:position] = set_position array[1][-3..].strip
+      array[1] = array[1].rpartition(" - #{player_hash[:team][0..1]}")[0]
+      player_hash[:position] = set_position array[1][-2..].strip
       player_hash[:position] = set_position('K') if player_hash[:position].blank? && array[1].last == 'K'
       binding.pry if player_hash[:position].blank?
       player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
