@@ -11,7 +11,7 @@ class Source < ActiveRecord::Base
     url = self.url if url.nil?
     doc = Nokogiri::HTML(open(url))
 # binding.pry  # Source 1) Get to the list
-    # xpath = '//*[@id="content"]//h4'
+    # xpath = '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody'
 
     full_txt = doc.xpath(self.xpath)
     # full_txt = full_txt[self.id - 4].css('div.player-row') if self.cbs?
@@ -73,20 +73,19 @@ class Source < ActiveRecord::Base
 
   def espn_parse array
     player_hash = {}
-
     player_hash[:rank] = array[0].split('.')[0].to_i
-    player_hash[:first_name],
-    player_hash[:last_name] = parse_name array[0].split('.',2)[1]
-
-    player_hash[:position] = set_position array[1]
-    player_hash[:team] = array[2]
-
-    if player_hash[:position].blank?
+    array[0].sub!("#{player_hash[:rank]}.",'').strip!
+    array[0].strip!
+    player_hash[:first_name], player_hash[:last_name] = parse_name array[0]
+    binding.pry if array[0].nil? || array[1].nil?
+    if set_position(array[2]).nil?
+      player_hash[:position] = set_position array[1]
+      player_hash[:team] = Team.find_by_abbrev array[2]
+    else
+      player_hash[:team] = Team.find_by_abbrev array[1]
       player_hash[:position] = set_position array[2]
-      player_hash[:team] = array[1]
     end
 
-    binding.pry if player_hash[:position].blank?
     player_hash
   end
 
@@ -96,7 +95,7 @@ class Source < ActiveRecord::Base
     array[1].sub!(' NWT','')
     array[1].sub!(' View News','')
     array[1].sub!(' View Videos','')
-    array[1] = array[1].strip
+    array[1].strip!
     if array[1].include?('DEF')
       player_hash[:position] = set_position 'DST'
       array[1].sub!(' DEF','')
@@ -188,16 +187,16 @@ class Source < ActiveRecord::Base
 
   def parse_data full_txt
     all = []
-    if self.nfl?
+    if self.nfl? || self.espn?
       all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
 
       while all[0].empty? do
         all.shift
       end
+# binding.pry  # Source 2) Parse the list to an array
     elsif self.ringer?
       all = full_txt.map { |td| td.text.strip.split(' ') }
 
-# binding.pry  # Source 2) Parse the list to an array
       while all[0].include?('•') do
         all.shift
       end

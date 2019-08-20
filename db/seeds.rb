@@ -15,23 +15,23 @@ Position.create(name: 'Defense & Special Teams', abbrev: 'DST')
 
 Source.create(name: 'NFL.com',
               url: 'https://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=1',
-              weight: 50,
+              weight: 30,
               xpath: '//*[@id="primaryContent"]//tbody')
 
 Source.create(name: 'The Ringer',
               url: 'https://www.theringer.com/2019/8/5/20752394/fantasy-football-draft-rankings-top-150-standard-leagues',
-              weight: 50,
+              weight: 30,
               xpath: '//*[@id="content"]//h4')
 
-# Source.create(name: 'ESPN',
-#               url: 'http://www.espn.com/fantasy/football/story/_/page/18RanksPreseason300PPR/2018-fantasy-football-ppr-rankings-top-300',
-#               weight: 15,
-#               xpath: '//aside[1]/table/tbody[1]')
+Source.create(name: 'ESPN - Berry PPR',
+              url: 'https://www.espn.com/fantasy/football/story/_/id/25759239/fantasy-football-2019-updated-top-200-ppr-rankings-matthew-berry',
+              weight: 30,
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
-# Source.create(name: 'Tristan Cockcroft',
-#               url: 'http://www.espn.com/fantasy/football/story/_/page/18RanksCockcroftPPR/tristan-h-cockcroft-2018-ppr-rankings-top-200-fantasy-football',
-#               weight: 15,
-#               xpath: '//aside[1]/table/tbody[1]')
+Source.create(name: 'ESPN - Clay non-PPR',
+              url: 'https://www.espn.com/fantasy/football/story/_/id/26692058/fantasy-football-updated-2019-non-ppr-rankings-mike-clay',
+              weight: 10,
+              xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 # Source.create(name: 'Jamey Eisenberg',
 #               url: 'https://www.cbssports.com/fantasy/football/rankings/',
