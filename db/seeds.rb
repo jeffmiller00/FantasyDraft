@@ -25,7 +25,7 @@ Source.create(name: 'The Ringer',
 
 Source.create(name: 'ESPN - Berry PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/25759239/fantasy-football-2019-updated-top-200-ppr-rankings-matthew-berry',
-              weight: 20,
+              weight: 15,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'ESPN - Clay non-PPR',
@@ -35,12 +35,12 @@ Source.create(name: 'ESPN - Clay non-PPR',
 
 Source.create(name: 'ESPN - Cockcroft PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/26701720/fantasy-football-updated-2019-ppr-rankings-tristan-h-cockcroft',
-              weight: 5,
+              weight: 2.5,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'ESPN - Karabell PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/25676188/2019-updated-fantasy-football-ppr-rankings-eric-karabell',
-              weight: 5,
+              weight: 2.5,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'ESPN - Yates PPR',
@@ -48,10 +48,10 @@ Source.create(name: 'ESPN - Yates PPR',
               weight: 10,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
-# Source.create(name: 'Jamey Eisenberg',
-#               url: 'https://www.cbssports.com/fantasy/football/rankings/',
-#               weight: 10,
-#               xpath: '//div[@class="player-wrapper"]')
+Source.create(name: 'FF Calc',
+              url: 'https://fantasyfootballcalculator.com/rankings',
+              weight: 10,
+              xpath: '//*[@id="rankings-body"]')
 
 # Source.create(name: 'Dave Richard',
 #               url: 'https://www.cbssports.com/fantasy/football/rankings/',

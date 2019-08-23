@@ -24,7 +24,7 @@ class Source < ActiveRecord::Base
     all_players = []
     # Need to add all these players to an array of hashes.
     array.each do |player_ary|
-      if self.espn?
+      if self.espn? || self.ffc?
         player_hash   = espn_parse(player_ary)
       elsif self.cbs?
         player_hash   = cbs_parse(player_ary)
@@ -46,6 +46,10 @@ class Source < ActiveRecord::Base
 
   def espn?
     !!(self.url.include? 'espn.com')
+  end
+
+  def ffc?
+    !!(self.url.include? 'fantasyfootballcalculator.com')
   end
 
   def nfl?
@@ -74,8 +78,8 @@ class Source < ActiveRecord::Base
     player_hash = {}
     player_hash[:rank] = array[0].split('.')[0].to_i
     array.shift if array[0].size < 4 && array[0].to_i == player_hash[:rank]
-    array.shift if array[0].blank?
     array[0].sub!("#{player_hash[:rank]}.",'')
+    array.shift if array[0].blank?
     array[0].strip!
     array.delete_at(0) if ['UP','DOWN'].include?(array[0])
     player_hash[:first_name], player_hash[:last_name] = parse_name array[0]
@@ -162,19 +166,20 @@ class Source < ActiveRecord::Base
   def set_position string
     return if string.nil?
     pos = string.gsub(/\W\d*/, '').strip
-    pos = 'DST' if pos.include?('D/ST') || pos.include?('DEF')
+    pos = 'K' if pos == 'PK'
+    pos = 'DST' if ['D/ST','DEF'].include?(pos)
     Position.find_by_abbrev(pos)
   end
 
   def parse_data full_txt
     all = []
-    if self.nfl? || self.espn?
+# binding.pry  # Source 2) Parse the list to an array
+    if self.nfl? || self.espn? || self.ffc?
       all = full_txt.search('tr').map { |tr| tr.search('td').map { |td| td.text.strip } }
 
       while all[0].empty? do
         all.shift
       end
-# binding.pry  # Source 2) Parse the list to an array
     elsif self.ringer?
       all = full_txt.map { |td| td.text.strip.split(' ') }
 
