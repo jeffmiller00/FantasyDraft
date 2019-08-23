@@ -15,12 +15,12 @@ Position.create(name: 'Defense & Special Teams', abbrev: 'DST')
 
 Source.create(name: 'NFL.com',
               url: 'https://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=1',
-              weight: 25,
+              weight: 20,
               xpath: '//*[@id="primaryContent"]//tbody')
 
 Source.create(name: 'The Ringer',
               url: 'https://www.theringer.com/2019/8/5/20752394/fantasy-football-draft-rankings-top-150-standard-leagues',
-              weight: 25,
+              weight: 21,
               xpath: '//*[@id="content"]//h4')
 
 Source.create(name: 'ESPN - Berry PPR',
@@ -35,30 +35,20 @@ Source.create(name: 'ESPN - Clay non-PPR',
 
 Source.create(name: 'ESPN - Cockcroft PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/26701720/fantasy-football-updated-2019-ppr-rankings-tristan-h-cockcroft',
-              weight: 2.5,
+              weight: 5,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'ESPN - Karabell PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/25676188/2019-updated-fantasy-football-ppr-rankings-eric-karabell',
-              weight: 2.5,
+              weight: 5,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'ESPN - Yates PPR',
               url: 'https://www.espn.com/fantasy/football/story/_/id/25848947/2019-updated-fantasy-football-ppr-rankings-field-yates',
-              weight: 10,
+              weight: 9,
               xpath: '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody')
 
 Source.create(name: 'FF Calc',
               url: 'https://fantasyfootballcalculator.com/rankings',
-              weight: 10,
+              weight: 15,
               xpath: '//*[@id="rankings-body"]')
-
-# Source.create(name: 'Dave Richard',
-#               url: 'https://www.cbssports.com/fantasy/football/rankings/',
-#               weight: 8,
-#               xpath: '//div[@class="player-wrapper"]')
-
-# Source.create(name: 'Heath Cummings',
-#               url: 'https://www.cbssports.com/fantasy/football/rankings/',
-#               weight: 6,
-#               xpath: '//div[@class="player-wrapper"]')
