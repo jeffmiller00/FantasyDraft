@@ -20,7 +20,7 @@ gem 'coffee-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 
-gem 'nokogiri'
+gem "nokogiri", ">= 1.10.4"
 gem 'haml'
 gem 'bootstrap-sass'
 
