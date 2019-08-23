@@ -74,17 +74,24 @@ class Source < ActiveRecord::Base
   def espn_parse array
     player_hash = {}
     player_hash[:rank] = array[0].split('.')[0].to_i
-    array[0].sub!("#{player_hash[:rank]}.",'').strip!
+    array.shift if array[0].size < 4 && array[0].to_i == player_hash[:rank]
+    array.shift if array[0].blank?
+    array[0].sub!("#{player_hash[:rank]}.",'')
     array[0].strip!
+    array.delete_at(0) if ['UP','DOWN'].include?(array[0])
     player_hash[:first_name], player_hash[:last_name] = parse_name array[0]
-    binding.pry if array[0].nil? || array[1].nil?
-    if set_position(array[2]).nil?
+    array.delete_at(2) if array[2].to_i > 0
+    if Team.find_by_abbrev(array[1]) == 'UNKNOWN'
       player_hash[:position] = set_position array[1]
       player_hash[:team] = Team.find_by_abbrev array[2]
     else
+      binding.pry if array[0].nil? || array[1].nil? || array[2].nil? || array[1] == 'RB'
       player_hash[:team] = Team.find_by_abbrev array[1]
-      player_hash[:position] = set_position array[2]
+      player_hash[:position] = set_position array[2][0..2]
+      player_hash[:position] = set_position array[2][0..1]
+      player_hash[:position] ||= set_position 'DST'
     end
+    binding.pry if anything_blank?(player_hash)
 
     player_hash
   end
@@ -213,5 +220,12 @@ class Source < ActiveRecord::Base
     end
 
     all
+  end
+
+  private
+
+  def anything_blank? player_hash
+    return (player_hash[:rank].blank? || player_hash[:team].blank? ||
+      player_hash[:position].blank? || player_hash[:first_name].blank? || player_hash[:last_name].blank?)
   end
 end

@@ -39,8 +39,8 @@ class Team
     abbrev = 'JAC' if abbrev == 'JAX'
     abbrev = 'LA' if abbrev == 'LAR'
     team = TEAMS.find {|team| team[:abbrev] == abbrev}
-    binding.pry if team.nil?
-    team[:abbrev] || 'None'
+    return 'UNKNOWN' if team.nil?
+    team[:abbrev]
   end
 
   def self.find_by_nickname nickname
