@@ -17,7 +17,6 @@ class Source < ActiveRecord::Base
     # full_txt = full_txt[self.id - 4].css('div.player-row') if self.cbs?
     all_array = parse_data full_txt
 
-    # all_array = remove_header_rows all_array if self.espn?
     self.array_to_hash all_array
   end
 
@@ -64,7 +63,7 @@ class Source < ActiveRecord::Base
     player_hash[:rank] = array[0].to_i
     player_hash[:first_name] = array[1]
     player_hash[:last_name] = array[2]
-    player_hash[:team] = map_to_espn_team array[3].upcase
+    player_hash[:team] = Team.find_by_abbrev array[3].upcase
     player_hash[:position] ||= set_position array[4].strip
     player_hash[:position] ||= set_position 'DST' # This ensures KC def gets a position
 
@@ -133,13 +132,6 @@ class Source < ActiveRecord::Base
     player_hash
   end
 
-  def remove_header_rows row_array
-    player_array = []
-    row_array.each_with_index do |player, i|
-      player_array << player if player[0] =~ /^[1-9].*\./
-    end
-    player_array
-  end
 
   def set_def_team team_arr
     case team_arr[0]
@@ -162,27 +154,9 @@ class Source < ActiveRecord::Base
     team
   end
 
-  def map_to_espn_team team
-    team = 'JAC' if team == 'JAX'
-    team = 'LAR' if team == 'LA'
-    team
-  end
-
   def parse_name string
     name_arry = string.strip.split(' ')
     [name_arry[0], name_arry[1]]
-  end
-
-  def parse_raw string
-    string_parts = string.strip.split(' ')
-
-    string_parts.shift.strip # Remove the overall rank
-    team  = string_parts.pop.strip
-    pos   = set_position(string_parts.pop.strip)
-    fname = string_parts.shift.strip.gsub(/\W\d*/, '')
-    lname = string_parts.shift.strip.gsub(/\W\d*/, '')
-
-    [fname, lname, pos, team]
   end
 
   def set_position string
@@ -207,16 +181,6 @@ class Source < ActiveRecord::Base
       while all[0].include?('•') do
         all.shift
       end
-
-
-    # unless self.cbs?
-    # else
-    #   all = []
-    #   full_txt.each do |row|
-    #     single = row.search('div').map { |div| div.text.strip }
-    #     single[1] = single[1].split(/\s+/)
-    #     all << single.flatten
-    #   end
     end
 
     all
