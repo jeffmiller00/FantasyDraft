@@ -24,15 +24,19 @@ class Source < ActiveRecord::Base
     all_players = []
     # Need to add all these players to an array of hashes.
     array.each do |player_ary|
-      if self.espn? || self.ffc?
-        player_hash   = espn_parse(player_ary)
-      elsif self.cbs?
-        player_hash   = cbs_parse(player_ary)
-      elsif self.nfl?
-        player_hash   = nfl_parse(player_ary)
-      elsif self.ringer?
-        player_hash   = ringer_parse(player_ary)
-      else
+      begin
+        if self.espn? || self.ffc?
+          player_hash   = espn_parse(player_ary)
+        elsif self.cbs?
+          player_hash   = cbs_parse(player_ary)
+        elsif self.nfl?
+          player_hash   = nfl_parse(player_ary)
+        elsif self.ringer?
+          player_hash   = ringer_parse(player_ary)
+        else
+        end
+      rescue
+        next
       end
       all_players << player_hash
     end
@@ -115,6 +119,7 @@ class Source < ActiveRecord::Base
       player_hash[:team] = Team.find_by_abbrev array[1][-3..].strip
       player_hash[:team] = Team.find_by_abbrev array[1][-2..].strip if ['NO', 'NE'].include?(player_hash[:team][-2..])
       array[1] = array[1].rpartition(" - #{player_hash[:team][0..1]}")[0]
+      raise 'This player doesn\'t have a team' if array[1][-2..].nil?
       player_hash[:position] = set_position array[1][-2..].strip
       player_hash[:position] = set_position('K') if player_hash[:position].blank? && array[1].last == 'K'
       binding.pry if player_hash[:position].blank?
@@ -127,6 +132,7 @@ class Source < ActiveRecord::Base
   def ringer_parse array
     player_hash = {}
     player_hash[:rank] = array[0].to_i
+    raise 'This player doesn\'t have a team' if array.last.nil?
     player_hash[:team] = Team.find_by_nickname array.last.strip
     player_hash[:position] = set_position array[-2].sub!(',','').strip
     player_hash[:first_name], player_hash[:last_name] = array[1..2].map{|n| n.strip.sub(',','')}
