@@ -16,7 +16,7 @@ class Team
     {abbrev: 'DEN', name: 'Broncos', market: 'Denver'},
     {abbrev: 'LAC', name: 'Chargers', market: 'San Diego'},
     {abbrev: 'KC', name: 'Chiefs', market: 'Kansas City'},
-    {abbrev: 'OAK', name: 'Raiders', market: 'Oakland'},
+    {abbrev: 'LV', name: 'Raiders', market: 'Las Vegas'},
     {abbrev: 'DAL', name: 'Cowboys', market: 'Dallas'},
     {abbrev: 'PHI', name: 'Eagles', market: 'Philadelphia'},
     {abbrev: 'NYG', name: 'Giants', market: 'New York'},

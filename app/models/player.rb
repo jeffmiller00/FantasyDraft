@@ -48,6 +48,7 @@ class Player < ActiveRecord::Base
   private
 
   def self.add_players players_arry
+    # binding.pry
     players_arry.each do |player|
       next if player.blank?
 

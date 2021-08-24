@@ -106,9 +106,14 @@ class Source < ActiveRecord::Base
   def nfl_parse array
     player_hash = {}
     player_hash[:rank] = array[0].to_i
-    array[1].sub!(' NWT','')
-    array[1].sub!(' View News','')
-    array[1].sub!(' View Videos','')
+# binding.pry if player_hash[:rank] == 72
+    array[1].gsub!(/ Q(\s|$)/,'')
+    array[1].gsub!(/ COV(\s|$)/,'')
+    array[1].gsub!(/ SUS(\s|$)/,'')
+    array[1].gsub!(/ PUP(\s|$)/,'')
+    array[1].sub!('NWT','')
+    array[1].sub!('View News','')
+    array[1].sub!('View Videos','')
     array[1].strip!
     if array[1].include?('DEF')
       player_hash[:position] = set_position 'DST'
