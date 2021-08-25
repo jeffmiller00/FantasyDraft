@@ -10,10 +10,11 @@ class Source < ActiveRecord::Base
     all_array = []
     url = self.url if url.nil?
     doc = Nokogiri::HTML(open(url))
+
 # binding.pry  # Source 1) Get to the list
-    # xpath = '//*[@id="article-feed"]/article[1]/div/div[2]/aside[2]/table/tbody'
 
     full_txt = doc.xpath(self.xpath)
+    full_txt = JSON.parse(full_txt.text)['props']['content'] if self.ringer?
     # full_txt = full_txt[self.id - 4].css('div.player-row') if self.cbs?
     all_array = parse_data full_txt
 
@@ -134,15 +135,13 @@ class Source < ActiveRecord::Base
     player_hash
   end
 
-  def ringer_parse array
+  def ringer_parse detailed_hash
     player_hash = {}
-    player_hash[:rank] = array[0].to_i
-    raise 'This player doesn\'t have a team' if array.last.nil?
-    player_hash[:team] = Team.find_by_nickname array.last.strip
-    player_hash[:position] = set_position array[-2].sub!(',','').strip
-    player_hash[:first_name], player_hash[:last_name] = array[1..2].map{|n| n.strip.sub(',','')}
-
-    # binding.pry if player_hash[:position].size > 2
+    player_hash[:rank] = detailed_hash['orders_ranks']['standard']
+    player_hash[:first_name] = detailed_hash['first_name']
+    player_hash[:last_name]  = detailed_hash['last_name']
+    player_hash[:team] = Team.find_by_abbrev detailed_hash['player_meta']['team_abbreviation']
+    player_hash[:position] = set_position detailed_hash['player_position_stats']['position'].upcase
 
     player_hash
   end
@@ -191,15 +190,9 @@ class Source < ActiveRecord::Base
       while all[0].empty? do
         all.shift
       end
-    elsif self.ringer?
-      all = full_txt.map { |td| td.text.strip.split(' ') }
-
-      while all[0].include?('•') do
-        all.shift
-      end
     end
 
-    all
+    self.ringer? ? full_txt : all
   end
 
   private
