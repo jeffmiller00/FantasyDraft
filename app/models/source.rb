@@ -12,10 +12,9 @@ class Source < ActiveRecord::Base
     doc = Nokogiri::HTML(open(url))
 
 # binding.pry  # Source 1) Get to the list
-
     full_txt = doc.xpath(self.xpath)
     full_txt = JSON.parse(full_txt.text)['props']['content'] if self.ringer?
-    # full_txt = full_txt[self.id - 4].css('div.player-row') if self.cbs?
+    full_txt = JSON.parse(full_txt.text.split('var sosData')[0].sub('};','}').split('var ecrData = ').last)['players'] if self.fantasypros?
     all_array = parse_data full_txt
 
     self.array_to_hash all_array
@@ -31,9 +30,13 @@ class Source < ActiveRecord::Base
         elsif self.cbs?
           player_hash   = cbs_parse(player_ary)
         elsif self.nfl?
+          next if player_ary[1].include?(' LB')
           player_hash   = nfl_parse(player_ary)
         elsif self.ringer?
           player_hash   = ringer_parse(player_ary)
+        elsif self.fantasypros?
+          player_hash   = fantasypros_parse(player_ary)
+          next if player_hash[:rank] > 300
         else
         end
       rescue
@@ -55,6 +58,10 @@ class Source < ActiveRecord::Base
 
   def ffc?
     !!(self.url.include? 'fantasyfootballcalculator.com')
+  end
+
+  def fantasypros?
+    !!(self.url.include? 'fantasypros.com')
   end
 
   def nfl?
@@ -128,7 +135,7 @@ class Source < ActiveRecord::Base
       raise 'This player doesn\'t have a team' if array[1][-2..].nil?
       player_hash[:position] = set_position array[1][-2..].strip
       player_hash[:position] = set_position('K') if player_hash[:position].blank? && array[1].last == 'K'
-      binding.pry if player_hash[:position].blank?
+      # binding.pry if player_hash[:position].blank?
       player_hash[:first_name], player_hash[:last_name] = parse_name array[1].strip
     end
 
@@ -142,6 +149,16 @@ class Source < ActiveRecord::Base
     player_hash[:last_name]  = detailed_hash['last_name']
     player_hash[:team] = Team.find_by_abbrev detailed_hash['player_meta']['team_abbreviation']
     player_hash[:position] = set_position detailed_hash['player_position_stats']['position'].upcase
+
+    player_hash
+  end
+
+  def fantasypros_parse detailed_hash
+    player_hash = {}
+    player_hash[:rank] = detailed_hash['rank_ecr']
+    player_hash[:first_name], player_hash[:last_name] = parse_name detailed_hash['player_name']
+    player_hash[:team] = Team.find_by_abbrev detailed_hash['player_team_id']
+    player_hash[:position] = set_position detailed_hash['player_position_id']
 
     player_hash
   end
@@ -192,7 +209,7 @@ class Source < ActiveRecord::Base
       end
     end
 
-    self.ringer? ? full_txt : all
+    (self.ringer? || self.fantasypros?) ? full_txt : all
   end
 
   private
