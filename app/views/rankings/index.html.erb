@@ -8,7 +8,7 @@
       <th>Position</th>
       <th>Team</th>
       <th>Overall Rank</th>
-      <% Source.all.each do |source| %>
+      <% Source.all.sort_by{:id}.each do |source| %>
         <th><%= "#{source.name} (#{source.weight.to_f}%)" %></th>
       <% end %>
       <th>Select</th>
@@ -24,11 +24,8 @@
         <td><%= rank[:player].position.name %></td>
         <td><%= rank[:player].team %></td>
         <td><%= rank[:overall_rank].round(2) %></td>
-        <% rank[:sources].each do |k, crs| %>
-          <% crs = crs.round(2) %>
-
-          <td><%= crs || 0 %></td>
-
+        <% Source.all.sort_by{:id}.each do |s| %>
+          <td><%= rank[:sources][s.id].round(2) || 'NoRnk' %></td>
         <% end %>
 
         <td>

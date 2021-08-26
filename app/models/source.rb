@@ -30,7 +30,7 @@ class Source < ActiveRecord::Base
         elsif self.cbs?
           player_hash   = cbs_parse(player_ary)
         elsif self.nfl?
-          next if player_ary[1].include?(' LB')
+          next if player_ary[1].include?('LB -')
           player_hash   = nfl_parse(player_ary)
         elsif self.ringer?
           player_hash   = ringer_parse(player_ary)

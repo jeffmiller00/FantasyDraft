@@ -9,6 +9,7 @@ class Player < ActiveRecord::Base
   validates :position, presence: true
   validates :team, presence: true
 
+  after_validation :remove_suffix
 
   def self.populate
     Source.all.each do |source|
@@ -74,5 +75,12 @@ class Player < ActiveRecord::Base
   def self.find_player(player_hash)
     Player.where('last_name' => player_hash[:last_name], 'team' => player_hash[:team], 'position' => player_hash[:position]) ||
       Player.where('first_name' => player_hash[:first_name], 'last_name' => player_hash[:last_name], 'team' => player_hash[:team])
+  end
+
+  def remove_suffix
+    self.last_name = self.last_name.gsub(/jr[.]?$/i, '').strip
+    self.last_name = self.last_name.gsub(/V$/i, '').strip
+    self.last_name = self.last_name.gsub(/II$/i, '').strip
+    self.last_name = self.last_name.gsub(/III$/i, '').strip
   end
 end

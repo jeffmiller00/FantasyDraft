@@ -16,7 +16,7 @@ Position.create(name: 'Defense & Special Teams', abbrev: 'DST')
 Source.create(name: 'NFL.com',
               url: 'https://fantasy.nfl.com/research/rankings?leagueId=0&statType=draftStats&offset=1',
               weight: 10,
-              xpath: '//*[@id="primaryContent"]//tbody')
+              xpath: '//tbody')
 
 Source.create(name: 'The Ringer',
               url: 'https://fantasyfootball.theringer.com',
