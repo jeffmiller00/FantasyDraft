@@ -36,7 +36,7 @@ class Source < ActiveRecord::Base
           player_hash   = ringer_parse(player_ary)
         elsif self.fantasypros?
           player_hash   = fantasypros_parse(player_ary)
-          next if player_hash[:rank] > 300
+          next if player_hash[:rank] > 315
         else
         end
       rescue
@@ -100,7 +100,6 @@ class Source < ActiveRecord::Base
       player_hash[:position] = set_position array[1]
       player_hash[:team] = Team.find_by_abbrev array[2]
     else
-      binding.pry if array[0].nil? || array[1].nil? || array[2].nil? || array[1] == 'RB'
       player_hash[:team] = Team.find_by_abbrev array[1]
       player_hash[:position] = set_position array[2][0..2]
       player_hash[:position] = set_position array[2][0..1]
@@ -114,7 +113,6 @@ class Source < ActiveRecord::Base
   def nfl_parse array
     player_hash = {}
     player_hash[:rank] = array[0].to_i
-# binding.pry if player_hash[:rank] == 72
     array[1].gsub!(/ Q(\s|$)/,'')
     array[1].gsub!(/ COV(\s|$)/,'')
     array[1].gsub!(/ SUS(\s|$)/,'')
@@ -131,6 +129,7 @@ class Source < ActiveRecord::Base
     else
       player_hash[:team] = Team.find_by_abbrev array[1][-3..].strip
       player_hash[:team] = Team.find_by_abbrev array[1][-2..].strip if ['NO', 'NE'].include?(player_hash[:team][-2..])
+      player_hash[:team] = Team.find_by_abbrev 'LA' if player_hash[:last_name] == 'Michel'
       array[1] = array[1].rpartition(" - #{player_hash[:team][0..1]}")[0]
       raise 'This player doesn\'t have a team' if array[1][-2..].nil?
       player_hash[:position] = set_position array[1][-2..].strip
@@ -149,6 +148,7 @@ class Source < ActiveRecord::Base
     player_hash[:last_name]  = detailed_hash['last_name']
     player_hash[:team] = Team.find_by_abbrev detailed_hash['player_meta']['team_abbreviation']
     player_hash[:position] = set_position detailed_hash['player_position_stats']['position'].upcase
+    player_hash[:position] = set_position 'WR' if(player_hash[:first_name] == 'Bryan' && player_hash[:last_name] == 'Edwards')
 
     player_hash
   end
@@ -187,7 +187,11 @@ class Source < ActiveRecord::Base
 
   def parse_name string
     name_arry = string.strip.split(' ')
-    [name_arry[0], name_arry[1]]
+    if Position.find_by_abbrev(name_arry[2]).nil?
+      [name_arry[0], name_arry[1..2].join(' ')]
+    else
+      [name_arry[0], name_arry[1]]
+    end
   end
 
   def set_position string

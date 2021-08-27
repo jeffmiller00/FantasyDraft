@@ -49,7 +49,6 @@ class Player < ActiveRecord::Base
   private
 
   def self.add_players players_arry
-    # binding.pry
     players_arry.each do |player|
       next if player.blank?
 
@@ -73,14 +72,20 @@ class Player < ActiveRecord::Base
   end
 
   def self.find_player(player_hash)
-    Player.where('last_name' => player_hash[:last_name], 'team' => player_hash[:team], 'position' => player_hash[:position]) ||
-      Player.where('first_name' => player_hash[:first_name], 'last_name' => player_hash[:last_name], 'team' => player_hash[:team])
+    sanitized_last_name = Player.remove_suffix(player_hash[:last_name])
+    Player.where('last_name' => sanitized_last_name, 'team' => player_hash[:team], 'position' => player_hash[:position]) ||
+      Player.where('first_name' => player_hash[:first_name], 'last_name' => sanitized_last_name, 'team' => player_hash[:team])
+  end
+
+  def self.remove_suffix last_name
+    last_name = last_name.gsub(/jr[.]?$/i, '').strip
+    last_name = last_name.gsub(/V$/i, '').strip
+    last_name = last_name.gsub(/II$/i, '').strip
+    last_name = last_name.gsub(/III$/i, '').strip
+    last_name
   end
 
   def remove_suffix
-    self.last_name = self.last_name.gsub(/jr[.]?$/i, '').strip
-    self.last_name = self.last_name.gsub(/V$/i, '').strip
-    self.last_name = self.last_name.gsub(/II$/i, '').strip
-    self.last_name = self.last_name.gsub(/III$/i, '').strip
+    self.last_name = Player.remove_suffix(self.last_name)
   end
 end

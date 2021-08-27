@@ -35,22 +35,21 @@ class Ranking < ActiveRecord::Base
 
   def self.get_all_by_player
     @all_ranks = []
-    @max ||= Ranking.maximum("overall_rank") || 255
     @tolerence = 0.1
-    @default_rank ||= @max * (1+@tolerence)
 
     Player.all.each do |player|
       one_rank = {}
       one_rank[:player] = player
 
       player_ranks = {}
-      ranks = Ranking.where("player_id = #{player.id}").all
+      ranks = Ranking.where(player: player).all
       ranks.each do |rnk|
         player_ranks[rnk.source_id] = rnk.overall_rank
       end
 
       Source.all.each do |s|
-        player_ranks[s.id] = @default_rank if player_ranks[s.id].to_i == 0
+        source_default = Ranking.where(source: s).maximum('overall_rank') * (1+@tolerence)
+        player_ranks[s.id] = source_default if player_ranks[s.id].to_i == 0
       end
 
       one_rank[:overall_rank] = 0
